@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Global Timezone Clock</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      animation: fadeIn 0.8s ease-in;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      color: #00d4ff;
+      text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+      margin-bottom: 10px;
+      letter-spacing: 3px;
+    }
+
+    .subtitle {
+      color: #a0aec0;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+    }
+
+    .clocks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+      padding: 20px;
+    }
+
+    .clock-card {
+      background: linear-gradient(145deg, #1a1a2e, #16213e);
+      border: 2px solid #00d4ff;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+      transition: all 0.3s ease;
+      animation: slideUp 0.6s ease-out forwards;
+      opacity: 0;
+    }
+
+    .clock-card:nth-child(1) { animation-delay: 0.1s; }
+    .clock-card:nth-child(2) { animation-delay: 0.2s; }
+    .clock-card:nth-child(3) { animation-delay: 0.3s; }
+    .clock-card:nth-child(4) { animation-delay: 0.4s; }
+    .clock-card:nth-child(5) { animation-delay: 0.5s; }
+    .clock-card:nth-child(6) { animation-delay: 0.6s; }
+    .clock-card:nth-child(7) { animation-delay: 0.7s; }
+    .clock-card:nth-child(8) { animation-delay: 0.8s; }
+    .clock-card:nth-child(9) { animation-delay: 0.9s; }
+    .clock-card:nth-child(10) { animation-delay: 1s; }
+    .clock-card:nth-child(11) { animation-delay: 1.1s; }
+    .clock-card:nth-child(12) { animation-delay: 1.2s; }
+
+    .clock-card:hover {
+      border-color: #ff006e;
+      box-shadow: 0 8px 32px rgba(255, 0, 110, 0.3);
+      transform: translateY(-5px);
+    }
+
+    .timezone-name {
+      font-size: 1.3rem;
+      color: #00d4ff;
+      margin-bottom: 15px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .time-display {
+      font-size: 3.5rem;
+      color: #ffffff;
+      font-weight: bold;
+      margin: 20px 0;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+      font-family: 'Courier New', monospace;
+      line-height: 1.2;
+    }
+
+    .date-display {
+      font-size: 0.95rem;
+      color: #a0aec0;
+      margin-bottom: 10px;
+    }
+
+    .timezone-offset {
+      font-size: 0.9rem;
+      color: #ff006e;
+      margin-top: 10px;
+      letter-spacing: 1px;
+    }
+
+    .control-panel {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+      padding: 20px;
+    }
+
+    button {
+      background: linear-gradient(145deg, #00d4ff, #0099cc);
+      color: #000;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+      font-family: 'Courier New', monospace;
+    }
+
+    button:hover {
+      background: linear-gradient(145deg, #ff006e, #ff4d94);
+      color: #fff;
+      transform: scale(1.05);
+      box-shadow: 0 5px 20px rgba(255, 0, 110, 0.4);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .status {
+      text-align: center;
+      color: #a0aec0;
+      font-size: 0.9rem;
+      margin-top: 30px;
+      letter-spacing: 1px;
+    }
+
+    .status .update-time {
+      color: #00d4ff;
+      font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tick {
+      animation: tick 0.3s ease-out;
+    }
+
+    @keyframes tick {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    footer {
+      text-align: center;
+      color: #a0aec0;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid rgba(0, 212, 255, 0.2);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .time-display {
+        font-size: 2.5rem;
+      }
+
+      .clocks-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>⏰ GLOBAL TIMEZONE CLOCK</h1>
+      <p class="subtitle">Real-time Clock Across the World</p>
+    </header>
+
+    <div class="control-panel">
+      <button onclick="toggleFormat()">Toggle 24H/12H Format</button>
+      <button onclick="addRandomTimezone()">Add Timezone</button>
+      <button onclick="resetTimezones()">Reset to Default</button>
+    </div>
+
+    <div class="clocks-grid" id="clocksContainer"></div>
+
+    <div class="status">
+      Updates every second | Last updated: <span class="update-time" id="lastUpdate">--:--:--</span>
+    </div>
+
+    <footer>
+      <p>Aggressive Hustler — Global Timezone Clock | © 2026</p>
+    </footer>
+  </div>
+
+  <script>
+    // Default timezones to display
+    const DEFAULT_TIMEZONES = [
+      { name: 'New York', timezone: 'America/New_York' },
+      { name: 'London', timezone: 'Europe/London' },
+      { name: 'Paris', timezone: 'Europe/Paris' },
+      { name: 'Tokyo', timezone: 'Asia/Tokyo' },
+      { name: 'Sydney', timezone: 'Australia/Sydney' },
+      { name: 'Dubai', timezone: 'Asia/Dubai' },
+      { name: 'Singapore', timezone: 'Asia/Singapore' },
+      { name: 'São Paulo', timezone: 'America/Sao_Paulo' },
+      { name: 'Mumbai', timezone: 'Asia/Kolkata' },
+      { name: 'Hong Kong', timezone: 'Asia/Hong_Kong' },
+      { name: 'Los Angeles', timezone: 'America/Los_Angeles' },
+      { name: 'Bangkok', timezone: 'Asia/Bangkok' }
+    ];
+
+    const ALL_TIMEZONES = [
+      'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
+      'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Europe/Moscow',
+      'Asia/Tokyo', 'Asia/Shanghai', 'Asia/Hong_Kong', 'Asia/Singapore',
+      'Asia/Bangkok', 'Asia/Kolkata', 'Asia/Dubai', 'Australia/Sydney',
+      'Australia/Melbourne', 'Pacific/Auckland', 'America/Sao_Paulo',
+      'Africa/Cairo', 'Africa/Johannesburg', 'Africa/Lagos'
+    ];
+
+    let currentTimezones = [...DEFAULT_TIMEZONES];
+    let use24HourFormat = true;
+
+    function formatTime(date, use24Hour = true) {
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      if (use24Hour) {
+        return `${hours}:${minutes}:${seconds}`;
+      } else {
+        const hoursNum = parseInt(hours);
+        const period = hoursNum >= 12 ? 'PM' : 'AM';
+        const displayHours = String(hoursNum % 12 || 12).padStart(2, '0');
+        return `${displayHours}:${minutes}:${seconds} ${period}`;
+      }
+    }
+
+    function formatDate(date) {
+      const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-US', options);
+    }
+
+    function getUtcOffset(timezone) {
+      const now = new Date();
+      const utcDate = new Date(now.toLocaleString('en-US', { timeZone: 'UTC' }));
+      const tzDate = new Date(now.toLocaleString('en-US', { timeZone: timezone }));
+      const offset = (tzDate - utcDate) / (1000 * 60 * 60);
+      const sign = offset >= 0 ? '+' : '';
+      const hours = Math.floor(Math.abs(offset));
+      const minutes = Math.round((Math.abs(offset) - hours) * 60);
+      return `${sign}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+
+    function createClockCard(tzData) {
+      const now = new Date();
+      const tzTime = new Date(now.toLocaleString('en-US', { timeZone: tzData.timezone }));
+      
+      return `
+        <div class="clock-card">
+          <div class="timezone-name">${tzData.name}</div>
+          <div class="date-display">${formatDate(tzTime)}</div>
+          <div class="time-display">${formatTime(tzTime, use24HourFormat)}</div>
+          <div class="timezone-offset">UTC ${getUtcOffset(tzData.timezone)}</div>
+        </div>
+      `;
+    }
+
+    function updateClocks() {
+      const container = document.getElementById('clocksContainer');
+      container.innerHTML = currentTimezones.map(tz => createClockCard(tz)).join('');
+      
+      // Add tick animation
+      const cards = container.querySelectorAll('.clock-card');
+      cards.forEach(card => {
+        card.classList.add('tick');
+        setTimeout(() => card.classList.remove('tick'), 300);
+      });
+
+      // Update last update time
+      const now = new Date();
+      document.getElementById('lastUpdate').textContent = 
+        `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    }
+
+    function toggleFormat() {
+      use24HourFormat = !use24HourFormat;
+      updateClocks();
+    }
+
+    function addRandomTimezone() {
+      const unusedTz = ALL_TIMEZONES.find(
+        tz => !currentTimezones.some(ctm => ctm.timezone === tz)
+      );
+
+      if (unusedTz) {
+        const tzName = unusedTz.split('/')[1].replace(/_/g, ' ');
+        currentTimezones.push({ name: tzName, timezone: unusedTz });
+        updateClocks();
+      } else {
+        alert('All timezones already added!');
+      }
+    }
+
+    function resetTimezones() {
+      currentTimezones = [...DEFAULT_TIMEZONES];
+      use24HourFormat = true;
+      updateClocks();
+    }
+
+    // Initialize
+    updateClocks();
+    
+    // Update every second
+    setInterval(updateClocks, 1000);
+  </script>
+</body>
+</html>
